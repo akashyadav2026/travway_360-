@@ -1,27 +1,42 @@
-import { ArrowLeft, Compass, MapPin, Mountain } from 'lucide-react';
-import { KALSUBAI_DESTINATION } from '../data/kalsubaiDemo';
+import { useState } from 'react';
+import { ArrowLeft, ArrowRight, Compass, MapPin, Mountain } from 'lucide-react';
+import type {
+  DestinationDemoData,
+  DestinationId,
+  PanoramaExperienceConfig,
+} from '../data/destinations';
 import { ResilientImage } from './ResilientImage';
 
 interface DestinationPreviewViewProps {
+  destination: DestinationDemoData;
+  experience: PanoramaExperienceConfig;
+  alternateDestination: DestinationDemoData;
   onBackToIntro: () => void;
   onOpen360Viewer: () => void;
   onPrefetch360Viewer: () => void;
+  onSwitchDestination: (destinationId: DestinationId) => void;
 }
 
 export function DestinationPreviewView({
+  destination,
+  experience,
+  alternateDestination,
   onBackToIntro,
   onOpen360Viewer,
   onPrefetch360Viewer,
+  onSwitchDestination,
 }: DestinationPreviewViewProps) {
+  const [showStories, setShowStories] = useState(true);
+
   return (
     <main>
-      {/* Step 2 Hero */}
+      {/* Destination Hero */}
       <section className="relative bg-[#151B19] text-[#F5F0E7]">
         <div className="relative min-h-[460px] lg:min-h-[540px] flex items-end">
           <ResilientImage
-            src={KALSUBAI_DESTINATION.heroImageUrl}
-            alt={KALSUBAI_DESTINATION.heroImageAlt}
-            fallbackTitle="Kalsubai Summit Vista"
+            src={destination.heroImageUrl}
+            alt={destination.heroImageAlt}
+            fallbackTitle={destination.name}
             priority
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
@@ -44,16 +59,16 @@ export function DestinationPreviewView({
               <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-[#C9B99D] mb-3">
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-[#D68A45]" />
-                  {KALSUBAI_DESTINATION.regionLine}
+                  {destination.regionLine}
                 </span>
               </div>
 
               <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#FFFFFF] mb-4">
-                {KALSUBAI_DESTINATION.name}
+                {destination.name}
               </h1>
 
               <p className="text-base sm:text-lg text-[#F5F0E7]/90 leading-relaxed max-w-2xl">
-                {KALSUBAI_DESTINATION.intro}
+                {destination.intro}
               </p>
             </div>
           </div>
@@ -63,7 +78,7 @@ export function DestinationPreviewView({
       {/* Structured Information Bar */}
       <section aria-label="Destination facts" className="bg-[#FFFFFF] border-b border-[#C9B99D]/50">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {KALSUBAI_DESTINATION.facts.map((fact) => (
+          {destination.facts.map((fact) => (
             <div key={fact.id} className="space-y-1">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs font-medium text-[#151B19]/60">{fact.label}</span>
@@ -92,16 +107,16 @@ export function DestinationPreviewView({
         <div className="rounded-2xl bg-[#183C32] text-[#F5F0E7] p-8 sm:p-12 lg:p-14 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-4">
             <p className="text-xs font-medium tracking-wide text-[#C9B99D]">
-              Before You Go · Optional Interactive Preview
+              Before You Go · Optional Interactive Preview · {experience.hotspots.length} Viewpoints
             </p>
             <h2 className="font-editorial text-3xl sm:text-4xl font-normal tracking-tight text-[#FFFFFF]">
-              Don’t just see the destination. Experience it.
+              {destination.beforeYouGoHeadline}
             </h2>
             <p className="text-[15px] sm:text-base text-[#F5F0E7]/85 leading-relaxed max-w-2xl">
-              Step into an interactive 360° sunrise summit environment to drag around the horizon, inspect three landscape viewpoints, and optionally listen to mountain wind—then return directly to your exact reading position below.
+              {destination.beforeYouGoDescription}
             </p>
             <p className="text-xs text-[#C9B99D] leading-relaxed">
-              Transparency note: The Phase 1 viewer renders an illustrative 2:1 equirectangular Sahyadri-inspired sunrise sample environment rather than field-captured Kalsubai survey footage.
+              {destination.beforeYouGoNote}
             </p>
           </div>
 
@@ -117,7 +132,7 @@ export function DestinationPreviewView({
               <span>Explore in 360°</span>
             </button>
             <span className="text-xs text-[#F5F0E7]/70 lg:text-right">
-              Drag to look · 3 interactive viewpoints · Audio muted by default
+              {destination.beforeYouGoHint}
             </span>
           </div>
         </div>
@@ -131,12 +146,14 @@ export function DestinationPreviewView({
         {/* Left Narrative & Sample Stages */}
         <div className="lg:col-span-7 space-y-12">
           <div>
-            <p className="text-xs font-medium text-[#183C32] mb-2">Destination Overview</p>
+            <p className="text-xs font-medium text-[#183C32] mb-2">
+              {destination.overviewKicker}
+            </p>
             <h2 className="font-editorial text-2xl sm:text-3xl font-normal text-[#151B19] mb-5">
-              High above the Sahyadri skyline
+              {destination.overviewHeading}
             </h2>
             <div className="space-y-4 text-[15px] sm:text-base text-[#151B19]/80 leading-relaxed max-w-prose">
-              {KALSUBAI_DESTINATION.overviewParagraphs.map((paragraph, idx) => (
+              {destination.overviewParagraphs.map((paragraph, idx) => (
                 <p key={idx}>{paragraph}</p>
               ))}
             </div>
@@ -145,13 +162,13 @@ export function DestinationPreviewView({
           <div className="pt-8 border-t border-[#C9B99D]/50">
             <div className="flex flex-wrap items-baseline justify-between gap-2 mb-6">
               <h2 className="font-editorial text-2xl sm:text-3xl font-normal text-[#151B19]">
-                Sample Ascent Progression
+                {destination.stagesHeading}
               </h2>
-              <span className="text-xs text-[#151B19]/60">Illustrative prototype stages</span>
+              <span className="text-xs text-[#151B19]/60">{destination.stagesSubtitle}</span>
             </div>
 
             <div className="divide-y divide-[#C9B99D]/45 border-y border-[#C9B99D]/45">
-              {KALSUBAI_DESTINATION.sampleRouteStages.map((stage) => (
+              {destination.sampleRouteStages.map((stage) => (
                 <div key={stage.stageNumber} className="py-6 grid grid-cols-1 sm:grid-cols-12 gap-4">
                   <div className="sm:col-span-2 font-mono text-sm text-[#183C32] tabular-nums">
                     {stage.stageNumber}
@@ -169,23 +186,23 @@ export function DestinationPreviewView({
           </div>
         </div>
 
-        {/* Right Trail Context & Sample Notes */}
+        {/* Right Atmosphere Context & Sample Notes */}
         <aside className="lg:col-span-5 space-y-8">
           <div className="rounded-2xl overflow-hidden bg-[#FFFFFF] border border-[#C9B99D]/45">
             <div className="aspect-[4/3]">
               <ResilientImage
-                src={KALSUBAI_DESTINATION.ridgeImageUrl}
-                alt={KALSUBAI_DESTINATION.ridgeImageAlt}
-                fallbackTitle="Sahyadri Trail Ascent"
+                src={destination.sidebarImageUrl}
+                alt={destination.sidebarImageAlt}
+                fallbackTitle={destination.name}
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="p-6 space-y-2">
               <p className="text-xs text-[#183C32] font-medium">
-                Atmosphere Preview · Editorial Photography
+                {destination.sidebarCaptionTitle}
               </p>
               <p className="text-sm text-[#151B19]/75 leading-relaxed">
-                Morning mist frequently pools inside the valleys below the ridge, creating clear cloud layers when viewed from above 1,400 meters.
+                {destination.sidebarCaptionText}
               </p>
             </div>
           </div>
@@ -194,14 +211,18 @@ export function DestinationPreviewView({
             <div className="flex items-center gap-2.5">
               <Mountain className="w-4 h-4 text-[#183C32]" />
               <h3 className="font-editorial text-xl text-[#151B19]">
-                Sample Preparation Notes
+                {destination.notesHeading}
               </h3>
             </div>
             <ul className="space-y-3 text-sm text-[#151B19]/80 leading-relaxed">
-              {KALSUBAI_DESTINATION.samplePreparationNotes.map((note, idx) => (
+              {destination.samplePreparationNotes.map((note, idx) => (
                 <li
                   key={idx}
-                  className={idx === KALSUBAI_DESTINATION.samplePreparationNotes.length - 1 ? 'pt-3 border-t border-[#C9B99D]/40 text-xs text-[#151B19]/60' : ''}
+                  className={
+                    idx === destination.samplePreparationNotes.length - 1
+                      ? 'pt-3 border-t border-[#C9B99D]/40 text-xs text-[#151B19]/60'
+                      : ''
+                  }
                 >
                   {note}
                 </li>
@@ -209,6 +230,100 @@ export function DestinationPreviewView({
             </ul>
           </div>
         </aside>
+      </section>
+
+      {/* Optional Visual Storytelling Cards (Alibaug Night Camping, separate from 360° viewer) */}
+      {destination.storyMoments && destination.storyMoments.length > 0 && (
+        <section
+          id="camp-moments"
+          className="border-t border-[#C9B99D]/45 bg-[#FFFFFF]"
+        >
+          <div className="max-w-7xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#C9B99D]/45">
+              <div className="max-w-2xl">
+                <p className="text-xs font-medium tracking-wide text-[#183C32] mb-2">
+                  Optional Visual Storytelling · Separate from 360° Environment
+                </p>
+                <h2 className="font-editorial text-2xl sm:text-3xl font-normal text-[#151B19] mb-2">
+                  {destination.storySectionTitle}
+                </h2>
+                <p className="text-sm text-[#151B19]/75">
+                  {destination.storySectionSubtitle}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowStories((prev) => !prev)}
+                aria-expanded={showStories}
+                className="self-start md:self-auto px-4 py-2 rounded-lg border border-[#C9B99D] text-xs font-medium text-[#151B19] whitespace-nowrap shrink-0 hover:bg-[#F5F0E7] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[#D68A45]"
+              >
+                {showStories ? 'Hide Camp Stories' : 'Show Camp Stories'}
+              </button>
+            </div>
+
+            {showStories && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+                  {destination.storyMoments.map((moment) => (
+                    <article
+                      key={moment.id}
+                      className="rounded-xl border border-[#C9B99D]/45 bg-[#F5F0E7]/45 overflow-hidden flex flex-col"
+                    >
+                      <div className="aspect-[4/3] bg-[#151B19]">
+                        <ResilientImage
+                          src={moment.imageUrl}
+                          alt={moment.imageAlt}
+                          fallbackTitle={moment.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-5 flex-1 flex flex-col gap-2">
+                        <div className="flex items-center gap-2 text-[11px] text-[#183C32] font-medium">
+                          <span className="font-mono tabular-nums">{moment.indexLabel}</span>
+                          <span aria-hidden="true">·</span>
+                          <span>{moment.momentType}</span>
+                        </div>
+                        <h3 className="font-editorial text-lg text-[#151B19] leading-snug">
+                          {moment.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-[#151B19]/75 leading-relaxed">
+                          {moment.caption}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                {destination.storyDisclosure && (
+                  <p className="mt-6 text-xs text-[#151B19]/65 leading-relaxed max-w-3xl">
+                    {destination.storyDisclosure}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Cross-Destination Switch Strip */}
+      <section className="border-t border-[#C9B99D]/45 bg-[#F5F0E7]">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-medium text-[#183C32]">Explore Other Prototype</p>
+            <p className="font-editorial text-xl text-[#151B19] mt-0.5">
+              {alternateDestination.name} · {alternateDestination.categoryLabel}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onSwitchDestination(alternateDestination.id)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[#183C32] text-sm font-medium text-[#183C32] whitespace-nowrap shrink-0 hover:bg-[#183C32] hover:text-[#F5F0E7] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-[#D68A45]"
+          >
+            <span>Open {alternateDestination.shortName}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </section>
     </main>
   );

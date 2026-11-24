@@ -1,15 +1,19 @@
+import type { DestinationId } from '../data/destinations';
+
 interface TopNavBarProps {
   activeView: 'intro' | 'destination';
+  selectedDestinationId: DestinationId;
   onNavigateIntro: () => void;
-  onNavigateDestination: () => void;
+  onSelectDestination: (destinationId: DestinationId) => void;
   onJumpToBeforeYouGo: () => void;
   onOpenViewer: () => void;
 }
 
 export function TopNavBar({
   activeView,
+  selectedDestinationId,
   onNavigateIntro,
-  onNavigateDestination,
+  onSelectDestination,
   onJumpToBeforeYouGo,
   onOpenViewer,
 }: TopNavBarProps) {
@@ -32,21 +36,34 @@ export function TopNavBar({
             type="button"
             onClick={onNavigateIntro}
             className={`whitespace-nowrap shrink-0 transition-colors duration-150 cursor-pointer hover:text-[#151B19] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D68A45] ${
-              activeView === 'intro' ? 'text-[#183C32] underline underline-offset-8 decoration-[#D68A45] decoration-2' : ''
+              activeView === 'intro'
+                ? 'text-[#183C32] underline underline-offset-8 decoration-[#D68A45] decoration-2'
+                : ''
             }`}
           >
             Overview
           </button>
           <button
             type="button"
-            onClick={onNavigateDestination}
+            onClick={() => onSelectDestination('kalsubai-summit')}
             className={`whitespace-nowrap shrink-0 transition-colors duration-150 cursor-pointer hover:text-[#151B19] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D68A45] ${
-              activeView === 'destination'
+              activeView === 'destination' && selectedDestinationId === 'kalsubai-summit'
                 ? 'text-[#183C32] underline underline-offset-8 decoration-[#D68A45] decoration-2'
                 : ''
             }`}
           >
             Kalsubai Summit
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelectDestination('alibaug-night-camping')}
+            className={`whitespace-nowrap shrink-0 transition-colors duration-150 cursor-pointer hover:text-[#151B19] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D68A45] ${
+              activeView === 'destination' && selectedDestinationId === 'alibaug-night-camping'
+                ? 'text-[#183C32] underline underline-offset-8 decoration-[#D68A45] decoration-2'
+                : ''
+            }`}
+          >
+            Alibaug Camping
           </button>
           <button
             type="button"
@@ -61,10 +78,12 @@ export function TopNavBar({
           {activeView === 'intro' ? (
             <button
               type="button"
-              onClick={onNavigateDestination}
+              onClick={() => {
+                document.getElementById('prototype-destinations')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="px-4 py-2 rounded-lg bg-[#183C32] text-[#F5F0E7] text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 hover:bg-[#151B19] transition-colors duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D68A45]"
             >
-              Explore Destination
+              Explore Destinations
             </button>
           ) : (
             <button

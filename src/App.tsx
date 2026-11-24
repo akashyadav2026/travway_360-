@@ -2,21 +2,32 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { TopNavBar } from './components/TopNavBar';
 import { IntroLandingView } from './components/IntroLandingView';
 import { DestinationPreviewView } from './components/DestinationPreviewView';
+import { DESTINATIONS, type DestinationId } from './data/destinations';
 
-const loadImmersiveViewer = () => import('./immersive/ImmersiveSummitModal');
-const ImmersiveSummitModal = lazy(loadImmersiveViewer);
+const loadImmersiveViewer = () => import('./immersive/ImmersivePanoramaModal');
+const ImmersivePanoramaModal = lazy(loadImmersiveViewer);
 
 export default function App() {
   const [activeView, setActiveView] = useState<'intro' | 'destination'>('intro');
+  const [selectedDestinationId, setSelectedDestinationId] =
+    useState<DestinationId>('kalsubai-summit');
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const savedScrollYRef = useRef<number>(0);
+
+  const currentBundle = DESTINATIONS[selectedDestinationId];
+  const alternateDestinationId: DestinationId =
+    selectedDestinationId === 'kalsubai-summit'
+      ? 'alibaug-night-camping'
+      : 'kalsubai-summit';
+  const alternateBundle = DESTINATIONS[alternateDestinationId];
 
   const handleNavigateIntro = useCallback(() => {
     setActiveView('intro');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const handleNavigateDestination = useCallback(() => {
+  const handleSelectDestination = useCallback((destinationId: DestinationId) => {
+    setSelectedDestinationId(destinationId);
     setActiveView('destination');
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
@@ -34,14 +45,22 @@ export default function App() {
     }
   }, [activeView]);
 
-  const handleOpenViewer = useCallback(() => {
-    savedScrollYRef.current = window.scrollY;
-    if (activeView !== 'destination') {
-      setActiveView('destination');
-      savedScrollYRef.current = 0;
-    }
-    setIsViewerOpen(true);
-  }, [activeView]);
+  const handleOpenViewerForDestination = useCallback(
+    (destinationId?: DestinationId) => {
+      if (destinationId && destinationId !== selectedDestinationId) {
+        setSelectedDestinationId(destinationId);
+        setActiveView('destination');
+        savedScrollYRef.current = 0;
+      } else if (activeView !== 'destination') {
+        setActiveView('destination');
+        savedScrollYRef.current = 0;
+      } else {
+        savedScrollYRef.current = window.scrollY;
+      }
+      setIsViewerOpen(true);
+    },
+    [activeView, selectedDestinationId]
+  );
 
   const handleCloseViewer = useCallback(() => {
     setIsViewerOpen(false);
@@ -69,23 +88,28 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[#F5F0E7] text-[#151B19]">
       <TopNavBar
         activeView={activeView}
+        selectedDestinationId={selectedDestinationId}
         onNavigateIntro={handleNavigateIntro}
-        onNavigateDestination={handleNavigateDestination}
+        onSelectDestination={handleSelectDestination}
         onJumpToBeforeYouGo={handleJumpToBeforeYouGo}
-        onOpenViewer={handleOpenViewer}
+        onOpenViewer={() => handleOpenViewerForDestination()}
       />
 
       <div className="flex-1">
         {activeView === 'intro' ? (
           <IntroLandingView
-            onExploreDestination={handleNavigateDestination}
-            onDirectLaunch360={handleOpenViewer}
+            onExploreDestination={handleSelectDestination}
+            onDirectLaunch360={handleOpenViewerForDestination}
           />
         ) : (
           <DestinationPreviewView
+            destination={currentBundle.destination}
+            experience={currentBundle.experience}
+            alternateDestination={alternateBundle.destination}
             onBackToIntro={handleNavigateIntro}
-            onOpen360Viewer={handleOpenViewer}
+            onOpen360Viewer={() => handleOpenViewerForDestination()}
             onPrefetch360Viewer={handlePrefetchViewer}
+            onSwitchDestination={handleSelectDestination}
           />
         )}
       </div>
@@ -94,13 +118,13 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#151B19]/70">
           <div className="space-y-1">
             <p className="font-editorial text-sm font-semibold text-[#151B19]">
-              MyTravWay · Phase 1 Destination Preview Prototype
+              MyTravWay · Destination Preview Prototype (Phase 2)
             </p>
             <p>
-              Demonstration prototype for Kalsubai Summit, Maharashtra. Illustrative 360° environment and sample trip notes are clearly labeled.
+              Demonstration prototype for Kalsubai Summit and Alibaug Night Camping, Maharashtra. Illustrative 360° environments and sample trip notes are clearly labeled.
             </p>
           </div>
-          <div className="flex items-center gap-6 shrink-0">
+          <div className="flex flex-wrap items-center gap-6 shrink-0">
             <button
               type="button"
               onClick={handleNavigateIntro}
@@ -110,10 +134,17 @@ export default function App() {
             </button>
             <button
               type="button"
-              onClick={handleNavigateDestination}
+              onClick={() => handleSelectDestination('kalsubai-summit')}
               className="hover:text-[#151B19] transition-colors cursor-pointer"
             >
               Kalsubai Summit
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSelectDestination('alibaug-night-camping')}
+              className="hover:text-[#151B19] transition-colors cursor-pointer"
+            >
+              Alibaug Camping
             </button>
           </div>
         </div>
@@ -129,10 +160,10 @@ export default function App() {
             >
               <div className="w-8 h-8 rounded-full border-2 border-[#C9B99D]/30 border-t-[#D68A45] animate-spin mb-4" />
               <p className="font-editorial text-xl text-[#FFFFFF]">
-                Preparing 360° Summit View
+                {currentBundle.experience.loadingTitle}
               </p>
               <p className="text-xs text-[#C9B99D] mt-1">
-                Loading Three.js panoramic sphere and viewpoints…
+                {currentBundle.experience.loadingSubtitle}
               </p>
               <button
                 type="button"
@@ -144,7 +175,11 @@ export default function App() {
             </div>
           }
         >
-          <ImmersiveSummitModal onClose={handleCloseViewer} />
+          <ImmersivePanoramaModal
+            destination={currentBundle.destination}
+            experience={currentBundle.experience}
+            onClose={handleCloseViewer}
+          />
         </Suspense>
       )}
     </div>

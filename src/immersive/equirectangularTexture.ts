@@ -1,8 +1,5 @@
 import * as THREE from 'three';
 
-export const KALSUBAI_PANORAMA_4K_URL =
-  '/src/assets/images/kalsubai_equirect_4k_final.jpg';
-
 /**
  * Converts spherical look angles (yawDeg = 0 facing -Z, positive yawDeg turning right toward +X,
  * positive pitchDeg looking above horizon) to Cartesian coordinates inside the sphere.
@@ -32,11 +29,14 @@ export function yawDegToCanvasU(yawDeg: number): number {
 }
 
 /**
- * Loads the pre-stitched 4096x2048 seamless 2:1 equirectangular panorama image.
+ * Loads a pre-stitched 4096x2048 seamless 2:1 equirectangular panorama image.
  * Preserves full native 4K resolution whenever the GPU supports 4096+ textures,
  * and gracefully scales only if an older GPU reports MAX_TEXTURE_SIZE < 4096.
  */
-export function loadPanoramaImage(maxTextureSize: number): Promise<HTMLImageElement | HTMLCanvasElement> {
+export function loadPanoramaImage(
+  panoramaUrl: string,
+  maxTextureSize: number
+): Promise<HTMLImageElement | HTMLCanvasElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.referrerPolicy = 'no-referrer';
@@ -48,7 +48,6 @@ export function loadPanoramaImage(maxTextureSize: number): Promise<HTMLImageElem
         return;
       }
 
-      // Only downscale if device WebGL MAX_TEXTURE_SIZE < 4096
       const targetW = Math.min(2048, maxTextureSize);
       const targetH = Math.round(targetW / 2);
       const canvas = document.createElement('canvas');
@@ -66,9 +65,9 @@ export function loadPanoramaImage(maxTextureSize: number): Promise<HTMLImageElem
     };
 
     img.onerror = () => {
-      reject(new Error('Failed to load high-resolution 360° summit panorama asset.'));
+      reject(new Error('Failed to load high-resolution 360° panorama asset.'));
     };
 
-    img.src = KALSUBAI_PANORAMA_4K_URL;
+    img.src = panoramaUrl;
   });
 }
