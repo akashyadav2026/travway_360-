@@ -115,16 +115,23 @@ export default function App() {
       </div>
 
       <footer className="border-t border-[#C9B99D]/50 bg-[#F5F0E7] pb-safe">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#151B19]/70">
-          <div className="space-y-1">
-            <p className="font-editorial text-sm font-semibold text-[#151B19]">
-              MyTravWay · Destination Preview Prototype (Phase 2)
-            </p>
-            <p>
-              Demonstration prototype for Kalsubai Summit and Alibaug Night Camping, Maharashtra. Illustrative 360° environments and sample trip notes are clearly labeled.
-            </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-xs text-[#151B19]/75">
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo-mark-192.png"
+              alt="MyTravWay"
+              className="w-10 h-10 object-contain rounded-full shadow-xs"
+            />
+            <div className="space-y-0.5">
+              <p className="font-editorial text-base font-semibold text-[#151B19]">
+                MyTravWay · Explore. Experience. Live.
+              </p>
+              <p className="text-xs text-[#151B19]/70">
+                Small-group treks and weekend escapes from Thane & Mumbai, Maharashtra.
+              </p>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-6 shrink-0">
+          <div className="flex flex-wrap items-center gap-5 sm:gap-6 shrink-0 font-medium">
             <button
               type="button"
               onClick={handleNavigateIntro}
@@ -146,7 +153,18 @@ export default function App() {
             >
               Alibaug Camping
             </button>
+            <a
+              href="https://chat.whatsapp.com/GpZrANb5LtO00Ct7nagUci"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#183C32] hover:underline"
+            >
+              WhatsApp Community
+            </a>
           </div>
+        </div>
+        <div className="border-t border-[#C9B99D]/30 py-3 text-center text-[11px] text-[#151B19]/60">
+          © 2026 MyTravWay · Thane, Maharashtra. All rights reserved.
         </div>
       </footer>
 

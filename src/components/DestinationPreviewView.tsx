@@ -1,9 +1,20 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Compass, MapPin, Mountain } from 'lucide-react';
-import type {
-  DestinationDemoData,
-  DestinationId,
-  PanoramaExperienceConfig,
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Compass,
+  MapPin,
+  MessageCircle,
+  Mountain,
+  Phone,
+  ShieldCheck,
+} from 'lucide-react';
+import {
+  MYTRAVWAY_CONTACT,
+  type DestinationDemoData,
+  type DestinationId,
+  type PanoramaExperienceConfig,
 } from '../data/destinations';
 import { ResilientImage } from './ResilientImage';
 
@@ -42,7 +53,7 @@ export function DestinationPreviewView({
           />
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-[#151B19] via-[#151B19]/55 to-[#151B19]/30"
+            className="absolute inset-0 bg-gradient-to-t from-[#151B19] via-[#151B19]/60 to-[#151B19]/30"
           />
 
           <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-8 pt-8 sm:pt-10 pb-10 sm:pb-16">
@@ -67,57 +78,91 @@ export function DestinationPreviewView({
                 {destination.name}
               </h1>
 
-              <p className="text-sm sm:text-lg text-[#F5F0E7]/90 leading-relaxed max-w-2xl">
+              <p className="text-sm sm:text-lg text-[#F5F0E7]/90 leading-relaxed max-w-2xl mb-6">
                 {destination.intro}
               </p>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={onOpen360Viewer}
+                  onMouseEnter={onPrefetch360Viewer}
+                  onFocus={onPrefetch360Viewer}
+                  className="inline-flex items-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#D68A45] text-[#151B19] text-sm font-semibold hover:bg-[#e19652] active:scale-[0.98] transition-all cursor-pointer shadow-sm"
+                >
+                  <Compass className="w-4 h-4 shrink-0" />
+                  <span>Explore in 360°</span>
+                </button>
+
+                <a
+                  href={`${MYTRAVWAY_CONTACT.whatsappHref}?text=${encodeURIComponent(
+                    `Hi MyTravWay, I'd like to book seats for ${destination.name}`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-3 min-h-[44px] rounded-lg bg-[#25D366] text-[#FFFFFF] text-sm font-semibold hover:bg-[#20ba59] active:scale-[0.98] transition-all shadow-sm"
+                >
+                  <MessageCircle className="w-4 h-4 shrink-0" />
+                  <span>Book Seat via WhatsApp ({destination.pricePerSeat})</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Structured Information Bar */}
+      {/* Structured Key Facts Bar */}
       <section aria-label="Destination facts" className="bg-[#FFFFFF] border-b border-[#C9B99D]/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {destination.facts.map((fact) => (
             <div
               key={fact.id}
-              className="p-3 sm:p-4 rounded-xl bg-[#F5F0E7]/45 sm:bg-transparent border sm:border-0 border-[#C9B99D]/35 space-y-1"
+              className="p-3.5 sm:p-4 rounded-xl bg-[#F5F0E7]/45 sm:bg-transparent border sm:border-0 border-[#C9B99D]/35 space-y-1"
             >
               <div className="flex items-center justify-between gap-1.5">
                 <span className="text-[11px] sm:text-xs font-medium text-[#151B19]/65">{fact.label}</span>
                 <span
-                  className={`text-[10px] sm:text-[11px] font-semibold px-1.5 py-0.5 rounded ${
+                  className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded ${
                     fact.sourceType === 'verified'
                       ? 'bg-[#183C32]/10 text-[#183C32]'
-                      : 'bg-[#151B19]/10 text-[#151B19]/70'
+                      : fact.sourceType === 'included'
+                      ? 'bg-[#25D366]/15 text-[#183C32]'
+                      : 'bg-[#D68A45]/15 text-[#8A4A10]'
                   }`}
                 >
-                  {fact.sourceType === 'verified' ? 'Verified' : 'Sample'}
+                  {fact.sourceType === 'verified'
+                    ? 'Verified'
+                    : fact.sourceType === 'included'
+                    ? 'Included'
+                    : fact.sourceType === 'logistics'
+                    ? 'Pickups'
+                    : 'Highlight'}
                 </span>
               </div>
               <p className="font-editorial text-lg sm:text-2xl font-normal text-[#151B19] tabular-nums">
                 {fact.value}
               </p>
-              <p className="text-[11px] sm:text-xs text-[#151B19]/65 leading-tight">{fact.note}</p>
+              <p className="text-[11px] sm:text-xs text-[#151B19]/70 leading-tight">{fact.note}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* BEFORE YOU GO — Optional 360° Launch Section */}
+      {/* BEFORE YOU GO — 360° Interactive Atmosphere Section */}
       <section
         id="before-you-go"
         className="max-w-7xl mx-auto px-4 sm:px-8 pt-12 sm:pt-20 pb-6 sm:pb-8 scroll-mt-20"
       >
         <div className="rounded-2xl bg-[#183C32] text-[#F5F0E7] p-6 sm:p-10 lg:p-14 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-center shadow-md">
           <div className="lg:col-span-7 space-y-3 sm:space-y-4">
-            <p className="text-xs font-medium tracking-wide text-[#C9B99D]">
-              Before You Go · Optional Interactive Preview · {experience.hotspots.length} Viewpoints
-            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#151B19]/50 border border-[#C9B99D]/30 text-xs font-medium text-[#C9B99D]">
+              <Compass className="w-3.5 h-3.5 text-[#D68A45]" />
+              <span>Interactive 360° Atmosphere Preview · {experience.hotspots.length} Viewpoints</span>
+            </div>
             <h2 className="font-editorial text-2xl sm:text-3xl lg:text-4xl font-normal tracking-tight text-[#FFFFFF]">
               {destination.beforeYouGoHeadline}
             </h2>
-            <p className="text-sm sm:text-base text-[#F5F0E7]/85 leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-base text-[#F5F0E7]/90 leading-relaxed max-w-2xl">
               {destination.beforeYouGoDescription}
             </p>
             <p className="text-xs text-[#C9B99D] leading-relaxed">
@@ -131,10 +176,10 @@ export function DestinationPreviewView({
               onClick={onOpen360Viewer}
               onMouseEnter={onPrefetch360Viewer}
               onFocus={onPrefetch360Viewer}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 min-h-[48px] rounded-lg bg-[#D68A45] text-[#151B19] text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 hover:bg-[#e19652] active:scale-[0.98] transition-all duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F5F0E7]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 min-h-[48px] rounded-lg bg-[#D68A45] text-[#151B19] text-sm sm:text-base font-semibold whitespace-nowrap shrink-0 hover:bg-[#e19652] active:scale-[0.98] transition-all duration-150 cursor-pointer shadow-md"
             >
               <Compass className="w-5 h-5 shrink-0" />
-              <span>Explore in 360°</span>
+              <span>Launch 360° View</span>
             </button>
             <span className="text-xs text-[#F5F0E7]/70 text-center lg:text-right">
               {destination.beforeYouGoHint}
@@ -143,15 +188,15 @@ export function DestinationPreviewView({
         </div>
       </section>
 
-      {/* Normal Accessible Destination Details */}
+      {/* Destination Details & Route Timeline */}
       <section
         id="trip-details"
         className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-start"
       >
-        {/* Left Narrative & Sample Stages */}
+        {/* Left Narrative & Stages */}
         <div className="lg:col-span-7 space-y-8 sm:space-y-12">
           <div>
-            <p className="text-xs font-medium text-[#183C32] mb-1.5 sm:mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#183C32] mb-1.5 sm:mb-2">
               {destination.overviewKicker}
             </p>
             <h2 className="font-editorial text-2xl sm:text-3xl font-normal text-[#151B19] mb-4 sm:mb-5">
@@ -173,7 +218,7 @@ export function DestinationPreviewView({
             </div>
 
             <div className="divide-y divide-[#C9B99D]/45 border-y border-[#C9B99D]/45">
-              {destination.sampleRouteStages.map((stage) => (
+              {destination.routeStages.map((stage) => (
                 <div
                   key={stage.stageNumber}
                   className="py-4 sm:py-6 flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6"
@@ -186,7 +231,7 @@ export function DestinationPreviewView({
                       <h3 className="font-editorial text-base sm:text-xl text-[#151B19]">
                         {stage.title}
                       </h3>
-                      <span className="text-[11px] sm:text-xs text-[#183C32] sm:text-[#151B19]/60 font-medium">
+                      <span className="text-[11px] sm:text-xs text-[#183C32] font-medium">
                         {stage.elevationNote}
                       </span>
                     </div>
@@ -200,7 +245,7 @@ export function DestinationPreviewView({
           </div>
         </div>
 
-        {/* Right Atmosphere Context & Sample Notes */}
+        {/* Right Atmosphere Sidebar & Packing List */}
         <aside className="lg:col-span-5 space-y-6 sm:space-y-8">
           <div className="rounded-2xl overflow-hidden bg-[#FFFFFF] border border-[#C9B99D]/45 shadow-sm">
             <div className="aspect-[4/3]">
@@ -212,7 +257,7 @@ export function DestinationPreviewView({
               />
             </div>
             <div className="p-4 sm:p-6 space-y-1.5 sm:space-y-2">
-              <p className="text-xs text-[#183C32] font-medium">
+              <p className="text-xs text-[#183C32] font-semibold uppercase tracking-wide">
                 {destination.sidebarCaptionTitle}
               </p>
               <p className="text-xs sm:text-sm text-[#151B19]/75 leading-relaxed">
@@ -229,24 +274,32 @@ export function DestinationPreviewView({
               </h3>
             </div>
             <ul className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-[#151B19]/80 leading-relaxed">
-              {destination.samplePreparationNotes.map((note, idx) => (
-                <li
-                  key={idx}
-                  className={
-                    idx === destination.samplePreparationNotes.length - 1
-                      ? 'pt-2.5 border-t border-[#C9B99D]/40 text-xs text-[#151B19]/60'
-                      : ''
-                  }
-                >
-                  {note}
+              {destination.preparationNotes.map((note, idx) => (
+                <li key={idx} className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#25D366] shrink-0 mt-0.5" />
+                  <span>{note}</span>
                 </li>
               ))}
             </ul>
+
+            <div className="pt-4 border-t border-[#C9B99D]/30 flex flex-col gap-2.5">
+              <a
+                href={`${MYTRAVWAY_CONTACT.whatsappHref}?text=${encodeURIComponent(
+                  `Hi MyTravWay, I have a query about ${destination.name}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#25D366] text-[#FFFFFF] text-xs font-semibold hover:bg-[#20ba59] transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>Ask Trip Lead on WhatsApp</span>
+              </a>
+            </div>
           </div>
         </aside>
       </section>
 
-      {/* Optional Visual Storytelling Cards (Alibaug Night Camping, separate from 360° viewer) */}
+      {/* Real Visual Storytelling Cards */}
       {destination.storyMoments && destination.storyMoments.length > 0 && (
         <section
           id="camp-moments"
@@ -255,8 +308,8 @@ export function DestinationPreviewView({
           <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-20">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4 mb-6 sm:mb-8 pb-5 sm:pb-6 border-b border-[#C9B99D]/45">
               <div className="max-w-2xl">
-                <p className="text-xs font-medium tracking-wide text-[#183C32] mb-1.5 sm:mb-2">
-                  Optional Visual Storytelling · Separate from 360° Environment
+                <p className="text-xs font-semibold tracking-wider uppercase text-[#183C32] mb-1.5 sm:mb-2">
+                  Real Community Moments
                 </p>
                 <h2 className="font-editorial text-2xl sm:text-3xl font-normal text-[#151B19] mb-1.5 sm:mb-2">
                   {destination.storySectionTitle}
@@ -293,7 +346,7 @@ export function DestinationPreviewView({
                         />
                       </div>
                       <div className="p-4 sm:p-5 flex-1 flex flex-col gap-1.5 sm:gap-2">
-                        <div className="flex items-center gap-2 text-[11px] text-[#183C32] font-medium">
+                        <div className="flex items-center gap-2 text-[11px] text-[#183C32] font-semibold">
                           <span className="font-mono tabular-nums">{moment.indexLabel}</span>
                           <span aria-hidden="true">·</span>
                           <span>{moment.momentType}</span>
@@ -308,12 +361,6 @@ export function DestinationPreviewView({
                     </article>
                   ))}
                 </div>
-
-                {destination.storyDisclosure && (
-                  <p className="mt-5 sm:mt-6 text-xs text-[#151B19]/65 leading-relaxed max-w-3xl">
-                    {destination.storyDisclosure}
-                  </p>
-                )}
               </>
             )}
           </div>
@@ -324,7 +371,7 @@ export function DestinationPreviewView({
       <section className="border-t border-[#C9B99D]/45 bg-[#F5F0E7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <p className="text-xs font-medium text-[#183C32]">Explore Other Prototype</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#183C32]">Explore Another Journey</p>
             <p className="font-editorial text-lg sm:text-xl text-[#151B19] mt-0.5">
               {alternateDestination.name} · {alternateDestination.categoryLabel}
             </p>
@@ -334,7 +381,7 @@ export function DestinationPreviewView({
             onClick={() => onSwitchDestination(alternateDestination.id)}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[42px] rounded-lg border border-[#183C32] text-sm font-medium text-[#183C32] whitespace-nowrap shrink-0 hover:bg-[#183C32] hover:text-[#F5F0E7] active:scale-95 transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-[#D68A45]"
           >
-            <span>Open {alternateDestination.shortName}</span>
+            <span>View {alternateDestination.shortName}</span>
             <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
