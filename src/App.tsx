@@ -114,7 +114,7 @@ export default function App() {
         )}
       </div>
 
-      <footer className="border-t border-[#C9B99D]/50 bg-[#F5F0E7]">
+      <footer className="border-t border-[#C9B99D]/50 bg-[#F5F0E7] pb-safe">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#151B19]/70">
           <div className="space-y-1">
             <p className="font-editorial text-sm font-semibold text-[#151B19]">

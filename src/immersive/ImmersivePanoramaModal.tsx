@@ -789,7 +789,7 @@ export default function ImmersivePanoramaModal({
       aria-modal="true"
       aria-label={experience.viewerAriaLabel}
       onWheel={handleWheelZoom}
-      className="fixed inset-0 z-50 bg-[#151B19] text-[#F5F0E7] flex flex-col select-none"
+      className="fixed inset-0 z-50 bg-[#151B19] text-[#F5F0E7] flex flex-col select-none pt-safe"
     >
       {/* Fullscreen 360° Sphere Viewport */}
       <div className="absolute inset-0 touch-none">
@@ -1115,7 +1115,7 @@ export default function ImmersivePanoramaModal({
       )}
 
       {/* Compact Bottom Control Dock */}
-      <div className="relative z-20 px-4 sm:px-6 py-2.5 bg-[#151B19]/90 border-t border-[#C9B99D]/20">
+      <div className="relative z-20 px-3 sm:px-6 py-2 sm:py-2.5 bg-[#151B19]/90 border-t border-[#C9B99D]/20 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span className="hidden xl:inline-flex items-center gap-1.5 text-xs text-[#C9B99D] mr-1">
@@ -1187,10 +1187,11 @@ export default function ImmersivePanoramaModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#D68A45] text-[#151B19] text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 hover:bg-[#e19652] transition-colors duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F5F0E7]"
+              className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 min-h-[38px] rounded-lg bg-[#D68A45] text-[#151B19] text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 hover:bg-[#e19652] active:scale-95 transition-all duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F5F0E7]"
             >
-              <span>Continue to Trip Details</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="hidden sm:inline">Continue to Trip Details</span>
+              <span className="sm:hidden">Back to Trek</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           </div>
         </div>
