@@ -1,0 +1,6 @@
+{
+  "name": "MyTravWay — Experience Before You Arrive",
+  "description": "Phase 1 single-destination immersive travel preview prototype for Kalsubai Summit, Maharashtra featuring an optional lazy-loaded 360-degree panoramic summit experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
